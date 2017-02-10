@@ -66,16 +66,11 @@ input {
 	var displayMessage="";
 	var socket = io.connect('http://localhost:8080');
 	var myId;
+	var activeMessages=[];
 	socket.on('submission', function (data){
-		
-
-		console.log(data["mssg"]);
-				console.log(data["id"]);
-						console.log(data.mssg);
-				console.log(data.id);
-
-				//console.log(incomingObj);
-
+		console.log(data.mssg);
+		console.log(data.id);
+		activeMessages.push(data);
 		display();
 
 	});
