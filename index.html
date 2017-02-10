@@ -8,10 +8,15 @@
 input {
     display: inline;
 }
-
+body{
+background-color: black;
+}
+      /*  canvas{border: 1px solid #FFF;}
+        .subdiv{width: 320px;}
+        .text{margin: auto; width: 290px;}*/
 </style>
 </head>
-<body>
+<body onload="init();">
 
 
 <!--
@@ -36,19 +41,17 @@ input {
 <!-- Chatroom          -->
 
 
-<div id="chatroom" style="
-			height: 500px;
-			display: none; 	
-			background-color: #D3D3D3;
-			margin: 0px;
-			position: relative;"  >
-	<div style="padding:10px; height: 400px; overflow-y: scroll" id=chatbox>You have entered the chatroom</div>
-	<div style=" width:100%; position:absolute; bottom:0;"> 
+<div id="chatroom" style="display: none;">
+	<div style=" width:100%; position:absolute; top:0;">
+	    <div class="subdiv">
+        <canvas id="MyCanvas1" width="1000" height="600">
+    	</div> 
 		<form action="javascript:clientMessage();" id="inputMessage">
 			<input style="
+				border: 1px solid #FFF;
 				margin: 10px;
                 bottom: 0; 
-                width: 90%; 
+                width: 70%; 
                 font-size: 12px;
                 padding:5px;" type="text" name="messageContent" value="Start screaming to yourself" >
            	<input type="submit" value="Submit">
@@ -56,22 +59,24 @@ input {
 		</form>
 	</div>
 </div>
-
 <!-- Username input                -->
 
 
 
 <script src = "/socket.io/socket.io.js"></script>
+
 <script> 
 	var displayMessage="";
 	var socket = io.connect('http://localhost:8080');
 	var myId;
 	var activeMessages=[];
 	socket.on('submission', function (data){
-		console.log(data.mssg);
-		console.log(data.id);
+		console.log(data);
+		data.y=Math.floor(Math.random()*256);
+		console.log(data.y);
+
 		activeMessages.push(data);
-		display();
+		console.log(activeMessages);
 
 	});
 	socket.on('idMe',function(data){
@@ -91,17 +96,23 @@ input {
 	}
 
 	function showChatRoom(){
-		document.getElementById("chatroom").style.display="block";
+		document.getElementById("chatroom").style.display="inline";
 		display();
 	}
 
 	function clientMessage(){
 		var mssg="";
+		var x=100;
+		var y=Math.floor(Math.random()*256);
+		var a=1;
 		mssg=document.getElementsByName("messageContent")[0].value;
 		console.log(mssg);
 		var thisMessage = {
 			mssg:mssg,
-			id:myId
+			id:myId,
+			x:x,
+			y:y,
+			a:a,
 		};
 		socket.emit('submission', thisMessage);
 		document.getElementsByName("messageContent")[0].value ="";
@@ -109,11 +120,78 @@ input {
 		// display();
 	}
 
-	function display(){
-		document.getElementById("chatbox").innerHTML= displayMessage;
-	}
 
-</script>
+        var can, ctx, step, steps = 0,
+              delay = 20;
+ 				var randomNum;
+ 				var rgb1;
+ 				var rgb2 ;
+ 				var rgb3 ;
+ 				var alpha;
+
+        function init() {
+            can = document.getElementById("MyCanvas1");
+            ctx = can.getContext("2d");
+                rgb1 = Math.floor(Math.random()*256);
+ 				 rgb2 = Math.floor(Math.random()*256);
+ 				 rgb3 = Math.floor(Math.random()*256);
+				 alpha = 1;
+              
+            ctx.font = "20pt Verdana";
+            ctx.fillStyle= "#fff"
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            step = 0;
+            steps = can.width + 50;
+            //RunTextLeftToRight();
+            displayActiveMssgs();
+            randomNum = 200*Math.random()+100;
+             randomNum2 = 3*Math.random()+1;
+        }
+        function displayActiveMssgs(){
+        	
+        	ctx.clearRect(0, 0, can.width, can.height);
+
+        	for (var i = activeMessages.length - 1; i >= 0; i--) {
+        			
+        			activeMessages[i].x++;
+	        		ctx.font = 100+(100-activeMessages[i].x) + "pt Verdana";
+	        		ctx.fillStyle="#FFFF";
+	        		ctx.fillText(activeMessages[i].mssg, activeMessages[i].x, activeMessages[i].y);
+	        		if(activeMessages[i].x-100>99){
+        				activeMessages.shift();        			}
+        			// console.log(activeMessages[i].mssg);
+        			// console.log(activeMessages[i].x);
+        		}
+        	var t = setTimeout('displayActiveMssgs()', 50);
+        	}
+        
+ 
+        function RunTextLeftToRight() {
+        	alpha -= 0.01;
+        	 var color = 'rgba('+
+      						rgb1+','+
+      						rgb2+','+
+     						rgb3 + ','+ 
+     						alpha +   
+     					')';
+            ctx.fillStyle = color;
+            step+=5;
+            ctx.clearRect(0, 0, can.width, can.height);
+            ctx.save();
+            //movement			
+            ctx.translate(step,randomNum);
+            //font = growth
+            ctx.font = step*.2 + "pt Verdana";
+            ctx.fillText("HELLLLLLLLOOOO", 0, 0);
+            ctx.restore();
+            if (step == steps)
+                step = 0;
+            if (step < steps)
+                var t = setTimeout('RunTextLeftToRight()', delay);
+        }
+
+    </script>
 
 </body>
 </html>
