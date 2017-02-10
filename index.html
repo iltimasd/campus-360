@@ -67,7 +67,7 @@ background-color: black;
 
 <script> 
 	var displayMessage="";
-	var socket = io.connect('http://localhost:8080');
+	var socket = io();
 	var myId;
 	var activeMessages=[];
 	socket.on('submission', function (data){
