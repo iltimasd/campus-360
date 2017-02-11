@@ -2,14 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Cat Enthusiasts Chatroom</title>
 
   <style>
 input {
-    display: inline;
+    display: block;
 }
 body{
+    overflow: hidden;
 background-color: black;
+}
+input[type=submit] {
+
+     position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 10px;
+    padding:6px;
+     background-color: #4CAF50;
+         text-decoration: none;
+    display: inline-block;
+         border: none;
+
+    }
+input[type=text]{
+             text-decoration: none;
+             background:#fffffe
+        width: -webkit-calc(100% - 90px);
+    width:    -moz-calc(100% - 90px);
+    width:         calc(100% - 90px);
+                    margin: 10px;
+                margin-right:10px;
 }
       /*  canvas{border: 1px solid #FFF;}
         .subdiv{width: 320px;}
@@ -44,17 +69,18 @@ background-color: black;
 <div id="chatroom" style="display: none;">
 	<div style=" width:100%; position:absolute; top:0;">
 	    <div class="subdiv">
-        <canvas id="MyCanvas1" width="1000" height="600">
+        <canvas id="MyCanvas1" width="1440" height="600">
     	</div> 
 		<form action="javascript:clientMessage();" id="inputMessage">
 			<input style="
+            position: fixed;
 				border: 1px solid #FFF;
-				margin: 10px;
+
                 bottom: 0; 
-                width: 70%; 
-                font-size: 12px;
+                 
+                font-size: 13px;
                 padding:5px;" type="text" name="messageContent" value="Start screaming to yourself" >
-           	<input type="submit" value="Submit">
+           	<input type="submit" value="Scream">
 
 		</form>
 	</div>
@@ -115,6 +141,7 @@ background-color: black;
 			a:a,
 		};
 		socket.emit('submission', thisMessage);
+        activeMessages.push(thisMessage);
 		document.getElementsByName("messageContent")[0].value ="";
 		// displayMessage += username + " : "+ thisMessage + "<br>";
 		// display();
@@ -149,8 +176,13 @@ background-color: black;
              randomNum2 = 3*Math.random()+1;
         }
         function displayActiveMssgs(){
-        	
+        	//can.width=window.innerWidth;
+            //can.height=window.innerHeight-100;
+                        ctx.restore();
+
         	ctx.clearRect(0, 0, can.width, can.height);
+            ctx.save();
+            ctx.translate(200,200);
 
         	for (var i = activeMessages.length - 1; i >= 0; i--) {
         			
